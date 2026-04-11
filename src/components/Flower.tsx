@@ -1,0 +1,62 @@
+import React, { useState } from 'react';
+import { motion } from 'motion/react';
+
+interface FlowerProps {
+  key?: React.Key;
+  x: number;
+  y: number;
+  color: string;
+  delay?: number;
+}
+
+export default function Flower({ x, y, color, delay = 0 }: FlowerProps) {
+  const [isBloomed, setIsBloomed] = useState(false);
+
+  return (
+    <motion.div
+      className="absolute pointer-events-auto cursor-pointer"
+      style={{ left: x, top: y }}
+      initial={{ scale: 0, rotate: 0 }}
+      animate={{ scale: 1 }}
+      transition={{ delay, duration: 0.5, type: 'spring' }}
+      onMouseEnter={() => setIsBloomed(true)}
+      onMouseLeave={() => setIsBloomed(false)}
+    >
+      {/* Stem */}
+      <motion.div
+        className="w-1 h-12 bg-green-500 rounded-full origin-bottom"
+        initial={{ height: 0 }}
+        animate={{ height: 48 }}
+        transition={{ delay: delay + 0.2, duration: 0.5 }}
+      />
+      
+      {/* Petals */}
+      <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, i) => (
+          <motion.div
+            key={angle}
+            className="absolute w-4 h-8 rounded-full origin-bottom"
+            style={{ 
+              backgroundColor: color,
+              rotate: angle,
+              bottom: '50%',
+              left: '50%',
+              marginLeft: '-8px'
+            }}
+            animate={{ 
+              scale: isBloomed ? 1.2 : 1,
+              rotate: isBloomed ? angle + 10 : angle,
+              y: isBloomed ? -5 : 0
+            }}
+            transition={{ duration: 0.3, delay: i * 0.05 }}
+          />
+        ))}
+        {/* Center */}
+        <motion.div 
+          className="absolute w-6 h-6 bg-yellow-400 rounded-full -translate-x-1/2 -translate-y-1/2"
+          animate={{ scale: isBloomed ? 1.1 : 1 }}
+        />
+      </div>
+    </motion.div>
+  );
+}

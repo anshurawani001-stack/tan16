@@ -1,0 +1,58 @@
+{
+  "entities": {
+    "Message": {
+      "title": "Message",
+      "description": "A birthday message from a friend or family member.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "authorName": { "type": "string", "description": "Name of the person leaving the message." },
+        "content": { "type": "string", "description": "The message text." },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "authorPhoto": { "type": "string", "format": "uri", "description": "Optional photo URL of the author." },
+        "authorUid": { "type": "string", "description": "UID of the user who wrote it." }
+      },
+      "required": ["authorName", "content", "createdAt", "authorUid"]
+    },
+    "UserProfile": {
+      "title": "User Profile",
+      "description": "Public profile information for users.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string", "format": "uri" },
+        "role": { "type": "string", "enum": ["admin", "user"] }
+      },
+      "required": ["uid", "displayName"]
+    },
+    "Photo": {
+      "title": "Photo",
+      "description": "A photo in the birthday gallery.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "url": { "type": "string", "format": "uri" },
+        "caption": { "type": "string" },
+        "year": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "authorUid": { "type": "string" }
+      },
+      "required": ["url", "createdAt", "authorUid"]
+    }
+  },
+  "firestore": {
+    "/messages/{messageId}": {
+      "schema": "Message",
+      "description": "Collection of birthday messages."
+    },
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Collection of user profiles."
+    },
+    "/photos/{photoId}": {
+      "schema": "Photo",
+      "description": "Collection of gallery photos."
+    }
+  }
+}
