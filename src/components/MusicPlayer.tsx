@@ -9,7 +9,7 @@ const songs: Song[] = [
   { 
     title: 'Nazar Na Lag Jaaye', 
     artist: 'Ash King & Sachin-Jigar', 
-    url: 'https://fair-teal-xma78guxtn.edgeone.app/Nazar%20Na%20Lag%20Jaaye%20With%20Lyrics%20_%20STREE%20_%20Rajkummar%20Rao,%20Shraddha%20Kapoor%20_%20Ash%20King%20&%20Sachin-Jigar.mp3',
+    url: 'https://genetic-aqua-91xxtapw4j.edgeone.app/Nazar%20Na%20Lag%20Jaaye%20With%20Lyrics%20_%20STREE%20_%20Rajkummar%20Rao,%20Shraddha%20Kapoor%20_%20Ash%20King%20&%20Sachin-Jigar.mp3',
     cover: 'https://picsum.photos/seed/stree/200/200'
   },
 ];
