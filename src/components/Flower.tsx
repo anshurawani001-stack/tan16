@@ -3,24 +3,53 @@ import { motion } from 'motion/react';
 
 interface FlowerProps {
   key?: React.Key;
+  id: number;
   x: number;
   y: number;
   color: string;
   delay?: number;
+  onRemove?: (id: number) => void;
 }
 
-export default function Flower({ x, y, color, delay = 0 }: FlowerProps) {
+export default function Flower({ id, x, y, color, delay = 0, onRemove }: FlowerProps) {
   const [isBloomed, setIsBloomed] = useState(false);
+  const [isFading, setIsFading] = useState(false);
+
+  const handleClick = (e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (isFading) return;
+    
+    setIsBloomed(true);
+    // After blooming, start fading out
+    setTimeout(() => {
+      setIsFading(true);
+    }, 800);
+  };
 
   return (
     <motion.div
       className="absolute pointer-events-auto cursor-pointer"
       style={{ left: x, top: y }}
-      initial={{ scale: 0, rotate: 0 }}
-      animate={{ scale: 1 }}
-      transition={{ delay, duration: 0.5, type: 'spring' }}
-      onMouseEnter={() => setIsBloomed(true)}
-      onMouseLeave={() => setIsBloomed(false)}
+      initial={{ scale: 0, rotate: 0, opacity: 1 }}
+      animate={{ 
+        scale: isFading ? 0 : (isBloomed ? 1.5 : 1),
+        opacity: isFading ? 0 : 1,
+        rotate: isFading ? 90 : 0
+      }}
+      exit={{ scale: 0, opacity: 0 }}
+      transition={{ 
+        scale: { duration: isFading ? 0.6 : 0.4, type: 'spring', stiffness: 200 },
+        opacity: { duration: 0.4 },
+        rotate: { duration: 0.6 }
+      }}
+      onAnimationComplete={() => {
+        if (isFading && onRemove) {
+          onRemove(id);
+        }
+      }}
+      onClick={handleClick}
+      onMouseEnter={() => !isFading && setIsBloomed(true)}
+      onMouseLeave={() => !isFading && setIsBloomed(false)}
     >
       {/* Stem */}
       <motion.div

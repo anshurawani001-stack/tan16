@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { Play, Pause, SkipBack, SkipForward, Music } from 'lucide-react';
 import { Button } from './ui/button';
 import { Card, CardContent } from './ui/card';
@@ -9,7 +9,7 @@ const songs: Song[] = [
   { 
     title: 'Nazar Na Lag Jaaye', 
     artist: 'Ash King & Sachin-Jigar', 
-    url: 'https://tan16.edgeone.app/Nazar%20Na%20Lag%20Jaaye%20With%20Lyrics%20_%20STREE%20_%20Rajkummar%20Rao,%20Shraddha%20Kapoor%20_%20Ash%20King%20&%20Sachin-Jigar.mp3', // Placeholder, user can replace with direct link
+    url: 'https://tan16.edgeone.app/Nazar%20Na%20Lag%20Jaaye%20With%20Lyrics%20_%20STREE%20_%20Rajkummar%20Rao,%20Shraddha%20Kapoor%20_%20Ash%20King%20&%20Sachin-Jigar.mp3',
     cover: 'https://picsum.photos/seed/stree/200/200'
   },
 ];
@@ -18,6 +18,36 @@ export default function MusicPlayer() {
   const [currentSongIndex, setCurrentSongIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const audioRef = useRef<HTMLAudioElement>(null);
+
+  useEffect(() => {
+    const attemptPlay = async () => {
+      if (audioRef.current) {
+        try {
+          await audioRef.current.play();
+          setIsPlaying(true);
+        } catch (err) {
+          console.log("Autoplay blocked, waiting for user interaction");
+          // If autoplay is blocked, wait for first click anywhere
+          const handleFirstInteraction = async () => {
+            try {
+              if (audioRef.current) {
+                await audioRef.current.play();
+                setIsPlaying(true);
+              }
+              window.removeEventListener('click', handleFirstInteraction);
+              window.removeEventListener('touchstart', handleFirstInteraction);
+            } catch (e) {
+              console.error("Interaction play failed:", e);
+            }
+          };
+          window.addEventListener('click', handleFirstInteraction);
+          window.addEventListener('touchstart', handleFirstInteraction);
+        }
+      }
+    };
+
+    attemptPlay();
+  }, []);
 
   const togglePlay = () => {
     if (audioRef.current) {

@@ -1,20 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, deleteDoc, doc } from 'firebase/firestore';
 import { db, auth, signInWithGoogle } from '../firebase';
 import { Photo } from '../types';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from './ui/dialog';
-import { Plus, Camera } from 'lucide-react';
+import { Plus, Camera, Trash2 } from 'lucide-react';
 
 const featuredPhotos: Partial<Photo>[] = [
-  { url: 'https://i.ibb.co/DPB4KyJJ/photo.jpg', caption: 'aesthetic ki 14', year: '2026' },
-  { url: 'https://i.ibb.co/N2ngX5vz/photo.jpg', caption: 'heeee', year: '2026' },
-  { url: 'https://i.ibb.co/dspQ0c4s/photo.jpg', caption: 'servicing', year: '2026' },
-  { url: 'https://i.ibb.co/NdFC6BTm/photo.jpg', caption: 'oo sundari', year: '2026' },
-  
+  { url: 'https://i.ibb.co/3YysXvfz/Whats-App-Image-2026-04-11-at-11-41-31-AM.jpg', caption: 'aesthetic', year: '2026' },
+  { url: 'https://i.ibb.co/4gVJMFky/Whats-App-Image-2026-04-11-at-11-40-58-AM-1.jpg', caption: 'heeee', year: '2026' },
+  { url: 'https://i.ibb.co/kdFZdDz/Whats-App-Image-2026-04-11-at-11-40-58-AM.jpg', caption: 'servicing', year: '2026' },
+  { url: 'https://i.ibb.co/bgWKH1Ph/Whats-App-Image-2026-04-11-at-11-41-32-AM.jpg', caption: 'oo sundari', year: '2026' },
+  { url: 'https://i.ibb.co/mrtzwR18/Whats-App-Image-2026-04-15-at-5-05-27-PM.jpg', caption: 'washroom selfi', year: '2026' },
+  { url: 'https://i.ibb.co/NnGXwTTG/Whats-App-Image-2026-04-15-at-5-06-24-PM.jpg', caption: 'hmmmmmmm', year: '2026' },
+  { url: 'https://i.ibb.co/mFRtpg1D/Whats-App-Image-2026-04-15-at-5-04-54-PM.jpg', caption: 'default smile', year: '2026' },
 ];
 
 export default function Gallery() {
@@ -57,6 +59,14 @@ export default function Gallery() {
       console.error("Error adding photo: ", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, 'photos', id));
+    } catch (error) {
+      console.error("Error deleting photo: ", error);
     }
   };
 
@@ -144,6 +154,18 @@ export default function Gallery() {
                     referrerPolicy="no-referrer"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                    {photo.id && (auth.currentUser?.uid === photo.authorUid || auth.currentUser?.email === 'anshurawani25@gmail.com') && (
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleDelete(photo.id!);
+                        }}
+                        className="absolute top-4 right-4 p-2 bg-red-500/80 hover:bg-red-600 text-white rounded-full transition-colors"
+                        title="Delete photo"
+                      >
+                        <Trash2 size={16} />
+                      </button>
+                    )}
                     {photo.year && <span className="text-pink-300 text-xs font-bold tracking-widest uppercase mb-1">{photo.year}</span>}
                     {photo.caption && <p className="text-white font-serif text-lg">{photo.caption}</p>}
                   </div>

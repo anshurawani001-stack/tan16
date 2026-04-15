@@ -28,6 +28,10 @@ export default function App() {
   // Target: April 16th at midnight in Bangladesh Time (UTC+6)
   const targetDate = new Date('2026-04-16T00:00:00+06:00');
 
+  const removeFlower = useCallback((id: number) => {
+    setFlowers(prev => prev.filter(f => f.id !== id));
+  }, []);
+
   const addFlower = useCallback((e: React.MouseEvent) => {
     const newFlower = {
       id: Date.now(),
@@ -65,7 +69,14 @@ export default function App() {
       <div className="fixed inset-0 pointer-events-none z-10">
         <AnimatePresence>
           {flowers.map(flower => (
-            <Flower key={flower.id} x={flower.x} y={flower.y} color={flower.color} />
+            <Flower 
+              key={flower.id} 
+              id={flower.id}
+              x={flower.x} 
+              y={flower.y} 
+              color={flower.color} 
+              onRemove={removeFlower}
+            />
           ))}
         </AnimatePresence>
       </div>
@@ -87,7 +98,7 @@ export default function App() {
             </div>
             <h1 className="text-6xl md:text-8xl font-serif font-black text-pink-900 mb-6 leading-tight">
               Happy <span className="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-500">Birthday</span>,<br />
-              Beautiful Soul
+              billu badmosh
             </h1>
             <p className="text-lg md:text-xl text-pink-700/70 max-w-2xl mx-auto font-medium leading-relaxed">
               Click anywhere to plant a flower in your digital garden. 

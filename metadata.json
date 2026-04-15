@@ -1,5 +1,7 @@
 {
-  "name": "Birthday Bloom Surprise",
+  "name": "Birthday",
   "description": "A personalized, interactive birthday website featuring blooming flower animations, a message board, photo gallery, and music player.",
-  "requestFramePermissions": []
+  "requestFramePermissions": [],
+  "C7": [],
+  "aq": []
 }

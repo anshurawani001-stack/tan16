@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, deleteDoc, doc } from 'firebase/firestore';
 import { db, auth, signInWithGoogle } from '../firebase';
 import { Message } from '../types';
 import { Button } from './ui/button';
@@ -10,6 +10,7 @@ import { ScrollArea } from './ui/scroll-area';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { motion, AnimatePresence } from 'motion/react';
 import { format } from 'date-fns';
+import { Trash2 } from 'lucide-react';
 
 export default function MessageBoard() {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -50,6 +51,14 @@ export default function MessageBoard() {
       console.error("Error adding message: ", error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteDoc(doc(db, 'messages', id));
+    } catch (error) {
+      console.error("Error deleting message: ", error);
     }
   };
 
@@ -110,12 +119,23 @@ export default function MessageBoard() {
                       {msg.authorName[0]}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="flex-1 bg-pink-50/50 p-4 rounded-2xl rounded-tl-none border border-pink-100">
+                  <div className="flex-1 bg-pink-50/50 p-4 rounded-2xl rounded-tl-none border border-pink-100 relative group">
                     <div className="flex justify-between items-center mb-1">
                       <span className="font-bold text-pink-800 text-sm">{msg.authorName}</span>
-                      <span className="text-[10px] text-pink-400">
-                        {msg.createdAt?.seconds ? format(new Date(msg.createdAt.seconds * 1000), 'MMM d, h:mm a') : 'Just now'}
-                      </span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-[10px] text-pink-400">
+                          {msg.createdAt?.seconds ? format(new Date(msg.createdAt.seconds * 1000), 'MMM d, h:mm a') : 'Just now'}
+                        </span>
+                        {(auth.currentUser?.uid === msg.authorUid || auth.currentUser?.email === 'anshurawani25@gmail.com') && (
+                          <button 
+                            onClick={() => msg.id && handleDelete(msg.id)}
+                            className="text-pink-300 hover:text-red-500 transition-colors opacity-0 group-hover:opacity-100"
+                            title="Delete wish"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        )}
+                      </div>
                     </div>
                     <p className="text-gray-700 text-sm leading-relaxed">{msg.content}</p>
                   </div>
